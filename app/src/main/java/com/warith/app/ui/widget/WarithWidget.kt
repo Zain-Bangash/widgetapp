@@ -34,13 +34,13 @@ class WarithWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                WidgetContent(context)
+                WidgetContent()
             }
         }
     }
 
     @Composable
-    private fun WidgetContent(@Suppress("UNUSED_PARAMETER") context: Context) {
+    private fun WidgetContent() {
         val context = LocalContext.current
         val historyManager = HistoryManager(context)
         val repository = LocalSourceRepository(context, historyManager)
@@ -48,7 +48,7 @@ class WarithWidget : GlanceAppWidget() {
 
         if (sources.isEmpty()) {
             Box(modifier = GlanceModifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-                Text(text = "No sources found", style = TextStyle(color = ColorProvider(android.R.color.white)))
+                Text(text = "No sources found", style = TextStyle(color = GlanceTheme.colors.onSurface))
             }
             return
         }
@@ -69,7 +69,6 @@ class WarithWidget : GlanceAppWidget() {
         }
 
         WidgetLayout(
-            context = context,
             source = source,
             entry = entry,
             showArrows = sources.size > 1
@@ -78,7 +77,6 @@ class WarithWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetLayout(
-        context: Context,
         source: Source,
         entry: Entry?,
         showArrows: Boolean
@@ -107,6 +105,7 @@ class WarithWidget : GlanceAppWidget() {
                 Image(
                     provider = ImageProvider(com.warith.app.R.drawable.ic_refresh),
                     contentDescription = "Refresh",
+                    colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
                     modifier = GlanceModifier
                         .size(24.dp)
                         .clickable(actionRunCallback<RefreshAction>())
@@ -159,6 +158,7 @@ class WarithWidget : GlanceAppWidget() {
                     Image(
                         provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_left),
                         contentDescription = "Previous Source",
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
                         modifier = GlanceModifier
                             .size(24.dp)
                             .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to -1)))
@@ -167,6 +167,7 @@ class WarithWidget : GlanceAppWidget() {
                     Image(
                         provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_right),
                         contentDescription = "Next Source",
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
                         modifier = GlanceModifier
                             .size(24.dp)
                             .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to 1)))
