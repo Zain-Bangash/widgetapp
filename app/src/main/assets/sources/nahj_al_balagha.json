@@ -1,0 +1,21 @@
+{
+  "source_id": "nahj_al_balagha",
+  "source_name": "Nahj al-Balagha",
+  "type": "page",
+  "entries": [
+    {
+      "id": 101,
+      "text": "Be like the flower that gives its fragrance even to the hand that crushes it.",
+      "narrator": null,
+      "reference": "Nahj al-Balagha, Wisdom 1",
+      "link": "https://example.com/nahj/101"
+    },
+    {
+      "id": 102,
+      "text": "He who has a thousand friends has not a friend to spare, and he who has one enemy will meet him everywhere.",
+      "narrator": null,
+      "reference": "Nahj al-Balagha, Wisdom 2",
+      "link": "https://example.com/nahj/102"
+    }
+  ]
+}

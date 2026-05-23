@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Warith</string>
+    <string name="widget_name">Warith Widget</string>
+    <string name="widget_description">Displays rotating narrations and excerpts from offline Islamic texts.</string>
+</resources>

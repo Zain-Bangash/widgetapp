@@ -1,0 +1,21 @@
+{
+  "source_id": "al_kafi",
+  "source_name": "Al-Kafi",
+  "type": "narration",
+  "entries": [
+    {
+      "id": 1,
+      "text": "Knowledge is a light that God throws into the heart of whomsoever He wishes to guide.",
+      "narrator": "Imam Sadiq (as)",
+      "reference": "Al-Kafi, Vol 1, Ch 1",
+      "link": "https://example.com/al-kafi/1"
+    },
+    {
+      "id": 2,
+      "text": "The value of every man is the beautiful things which he does.",
+      "narrator": "Imam Ali (as)",
+      "reference": "Al-Kafi, Vol 1, Ch 2",
+      "link": "https://example.com/al-kafi/2"
+    }
+  ]
+}
