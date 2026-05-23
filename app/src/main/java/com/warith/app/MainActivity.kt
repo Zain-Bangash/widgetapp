@@ -39,8 +39,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val context = LocalContext.current
-    val historyManager = remember { HistoryManager(context) }
-    val repository = remember { LocalSourceRepository(context, historyManager) }
+    val historyManager = remember { WarithApp.instance.historyManager }
+    val repository = remember { WarithApp.instance.repository }
     val sources = remember { repository.getAllSources() }
 
     var autoRotationEnabled by remember { mutableStateOf(historyManager.isAutoRotationEnabled()) }

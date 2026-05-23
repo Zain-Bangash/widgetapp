@@ -11,6 +11,7 @@ import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
+import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
@@ -20,14 +21,10 @@ import androidx.glance.appwidget.updateAll
 import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.material3.ColorProviders
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
+import com.warith.app.WarithApp
 import com.warith.app.data.model.Entry
 import com.warith.app.data.model.Source
-import com.warith.app.data.repository.LocalSourceRepository
-import com.warith.app.data.repository.SourceRepository
-import com.warith.app.util.HistoryManager
 
 class WarithWidget : GlanceAppWidget() {
 
@@ -41,9 +38,8 @@ class WarithWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetContent() {
-        val context = LocalContext.current
-        val historyManager = HistoryManager(context)
-        val repository = LocalSourceRepository(context, historyManager)
+        val historyManager = WarithApp.instance.historyManager
+        val repository = WarithApp.instance.repository
         val sources = repository.getAllSources()
 
         if (sources.isEmpty()) {
@@ -102,14 +98,19 @@ class WarithWidget : GlanceAppWidget() {
                     )
                 )
 
-                Image(
-                    provider = ImageProvider(com.warith.app.R.drawable.ic_refresh),
-                    contentDescription = "Refresh",
-                    colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                Box(
                     modifier = GlanceModifier
-                        .size(24.dp)
-                        .clickable(actionRunCallback<RefreshAction>())
-                )
+                        .size(48.dp)
+                        .clickable(actionRunCallback<RefreshAction>()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        provider = ImageProvider(com.warith.app.R.drawable.ic_refresh),
+                        contentDescription = "Refresh",
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                        modifier = GlanceModifier.size(24.dp)
+                    )
+                }
             }
 
             Spacer(modifier = GlanceModifier.height(8.dp))
@@ -155,23 +156,35 @@ class WarithWidget : GlanceAppWidget() {
                 verticalAlignment = Alignment.Bottom
             ) {
                 if (showArrows) {
-                    Image(
-                        provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_left),
-                        contentDescription = "Previous Source",
-                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
-                        modifier = GlanceModifier
-                            .size(24.dp)
-                            .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to -1)))
-                    )
-                    Spacer(modifier = GlanceModifier.width(8.dp))
-                    Image(
-                        provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_right),
-                        contentDescription = "Next Source",
-                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
-                        modifier = GlanceModifier
-                            .size(24.dp)
-                            .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to 1)))
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = GlanceModifier
+                                .size(48.dp)
+                                .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to -1))),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_left),
+                                contentDescription = "Previous Source",
+                                colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                                modifier = GlanceModifier.size(24.dp)
+                            )
+                        }
+
+                        Box(
+                            modifier = GlanceModifier
+                                .size(48.dp)
+                                .clickable(actionRunCallback<NavigateAction>(actionParametersOf(NavigateAction.directionKey to 1))),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                provider = ImageProvider(com.warith.app.R.drawable.ic_arrow_right),
+                                contentDescription = "Next Source",
+                                colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                                modifier = GlanceModifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = GlanceModifier.defaultWeight())
@@ -202,15 +215,15 @@ class WarithWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        val historyManager = HistoryManager(context)
-        val repository = LocalSourceRepository(context, historyManager)
+        val historyManager = WarithApp.instance.historyManager
+        val repository = WarithApp.instance.repository
         val sources = repository.getAllSources()
         val currentIndex = historyManager.getCurrentSourceIndex()
 
         if (currentIndex < sources.size) {
             val source = sources[currentIndex]
             repository.getNextEntry(source.sourceId)
-            WarithWidget().update(context, glanceId)
+            WarithWidget().updateAll(context)
         }
     }
 }
@@ -218,15 +231,15 @@ class RefreshAction : ActionCallback {
 class NavigateAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         val direction = parameters[directionKey] ?: 0
-        val historyManager = HistoryManager(context)
-        val repository = LocalSourceRepository(context, historyManager)
+        val historyManager = WarithApp.instance.historyManager
+        val repository = WarithApp.instance.repository
         val sources = repository.getAllSources()
 
         if (sources.isNotEmpty()) {
             var newIndex = (historyManager.getCurrentSourceIndex() + direction) % sources.size
             if (newIndex < 0) newIndex += sources.size
             historyManager.setCurrentSourceIndex(newIndex)
-            WarithWidget().update(context, glanceId)
+            WarithWidget().updateAll(context)
         }
     }
 

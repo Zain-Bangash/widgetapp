@@ -9,7 +9,7 @@ class HistoryManager(context: Context) {
     fun markAsShown(sourceId: String, entryId: Int) {
         val shown = prefs.getStringSet("shown_$sourceId", emptySet())?.toMutableSet() ?: mutableSetOf()
         shown.add(entryId.toString())
-        prefs.edit().putStringSet("shown_$sourceId", shown).apply()
+        prefs.edit().putStringSet("shown_$sourceId", shown).commit()
     }
 
     fun getShownIds(sourceId: String): Set<Int> {
@@ -18,20 +18,18 @@ class HistoryManager(context: Context) {
     }
 
     fun resetHistory(sourceId: String) {
-        prefs.edit().remove("shown_$sourceId").apply()
+        prefs.edit().remove("shown_$sourceId").commit()
     }
 
     fun resetAllHistory() {
-        // We only want to remove shown records, but also need to keep track of auto-rotation settings if any.
-        // Actually the requirement says "only clear the already seen records".
-        val allKeys = prefs.all.keys.filter { it.startsWith("shown_") }
+        val allKeys = prefs.all.keys.filter { it.startsWith("shown_") || it.startsWith("current_entry_") }
         val editor = prefs.edit()
         allKeys.forEach { editor.remove(it) }
-        editor.apply()
+        editor.commit()
     }
 
     fun setAutoRotationEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean("auto_rotation", enabled).apply()
+        prefs.edit().putBoolean("auto_rotation", enabled).commit()
     }
 
     fun isAutoRotationEnabled(): Boolean {
@@ -39,7 +37,7 @@ class HistoryManager(context: Context) {
     }
 
     fun setCurrentSourceIndex(index: Int) {
-        prefs.edit().putInt("current_source_index", index).apply()
+        prefs.edit().putInt("current_source_index", index).commit()
     }
 
     fun getCurrentSourceIndex(): Int {
@@ -47,7 +45,7 @@ class HistoryManager(context: Context) {
     }
 
     fun setCurrentEntryId(sourceId: String, entryId: Int) {
-        prefs.edit().putInt("current_entry_$sourceId", entryId).apply()
+        prefs.edit().putInt("current_entry_$sourceId", entryId).commit()
     }
 
     fun getCurrentEntryId(sourceId: String): Int? {

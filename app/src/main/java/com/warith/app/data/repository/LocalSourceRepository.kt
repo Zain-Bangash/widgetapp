@@ -18,7 +18,7 @@ class LocalSourceRepository(
     private fun loadSourcesFromAssets(): List<Source> {
         val sourceList = mutableListOf<Source>()
         try {
-            val files = context.assets.list("sources") ?: emptyArray()
+            val files = context.assets.list("sources")?.sortedArray() ?: emptyArray()
             for (fileName in files) {
                 if (fileName.endsWith(".json")) {
                     val inputStream = context.assets.open("sources/$fileName")

@@ -1,0 +1,4 @@
+<resources>
+    <style name="Theme.Warith" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+    </style>
+</resources>
